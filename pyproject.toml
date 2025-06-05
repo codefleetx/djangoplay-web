@@ -26,16 +26,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.black]
-line-length = 120
+line-length = 255
 target-version = ['py310']
 
 [tool.isort]
 profile = "black"
-line_length = 120
+line_length = 255
 skip = ["migrations"]
 
 [tool.ruff]
-line-length = 120
+line-length = 255
 target-version = "py310"
 exclude = [".git", "__pycache__", "migrations", "*/migrations/*", ".venv", "venv", "env"]
 
