@@ -198,3 +198,6 @@ project_tree.txt
 ruff
 media
 change-summary.txt
+
+# SSL Certicates for local
+.certs

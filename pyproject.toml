@@ -1,7 +1,7 @@
 [project]
 name = "paystream"
 version = "0.1.0"
-description = "PaystreamA modern, full-stack **PayStream** built with **Django + React**. Designed for small businesses and freelancers to manage clients, invoices, payments, and uploaded PDFs—securely, intuitively, and efficiently."
+description = "PaystreamA modern, full-stack **PayStream** built with **Django + React**. Designed for small businesses and freelancers to manage businesses, invoices, payments, and uploaded PDFs—securely, intuitively, and efficiently."
 authors = [
     {name = "Shekhar Bhosale", email = "vbgiyor@gmail.com"},
 ]
@@ -60,10 +60,18 @@ ignore = [
     "D102",  # Missing docstring in public method
     "D105",  # Missing docstring in magic method
     "D107",  # Missing docstring in __init__
-    "D103", # Missing docstring in public function
+    "D103",  # Missing docstring in public function
     "D106", 
     "E902",
-    "D401", #First line of docstring should be in imperative mood
+    "D401",  # First line of docstring should be in imperative mood
+    "D200",  # One-line docstring should fit on one line
+    "D400",  # First line should end with a period
+    "D415",  # First line should end with a period, question mark, or exclamation point
+    "B904",  # Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+    "F403",  # from module import *
+    "F401",  # from module import *
+    "F405",  # from module import *
+    "E722",  # Do not use bare `except`
 ]
 
 [tool.ruff.format]

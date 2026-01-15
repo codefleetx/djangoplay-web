@@ -1,14 +1,28 @@
-import os
+import warnings
 
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'paystream.settings')
+# ---------------------------------------------------------------------
+# Silence "Accessing the database during app initialization is discouraged"
+# RuntimeWarning in Celery processes as well.
+# ---------------------------------------------------------------------
+warnings.filterwarnings(
+    "ignore",
+    message=r"Accessing the database during app initialization is discouraged.*",
+    category=RuntimeWarning,
+)
 
-app = Celery('paystream')
-app.config_from_object('django.conf:settings', namespace='CELERY')
+# Set the default Django settings module for the 'celery' program.
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "paystream.settings")
+
+# Create the Celery application instance
+app = Celery("paystream")
+
+# Load configuration from Django settings (CELERY_* settings)
+app.config_from_object("django.conf:settings", namespace="CELERY")
+
+# Autodiscover tasks in installed apps
 app.autodiscover_tasks()
 
-
-@app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
+# Make sure the celery app is available to Django
+__all__ = ("app",)

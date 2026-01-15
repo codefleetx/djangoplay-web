@@ -1,24 +1,25 @@
-from django.urls import path
-from rest_framework.routers import DefaultRouter
+# users/urls.py
 
-from .views import LoginView, PasswordResetView, SignupView, UserViewSet
+from django.urls import include, path
+from utilities.views.health_check import HealthCheckView
 
-# Create a router and register the UserViewSet
-router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
+app_name = "users"
 
 urlpatterns = [
-    # URL for Signup
-    path('signup/', SignupView.as_view(), name='signup'),
-
-    # URL for Login
-    path('login/', LoginView.as_view(), name='login'),
-
-    # URL for Password Reset
+    # ------------------------------------------------------------------
+    # Canonical versioned API
+    # ------------------------------------------------------------------
     path(
-        'password-reset/',
-        PasswordResetView.as_view(),
-        name='password-reset'),
+        "",
+        include("users.views.v1"),
+    ),
 
-    # Register the UserViewSet routes
-] + router.urls
+    # ------------------------------------------------------------------
+    # Health check (non-versioned by design)
+    # ------------------------------------------------------------------
+    path(
+        "health/",
+        HealthCheckView.as_view(),
+        name="health-check",
+    ),
+]

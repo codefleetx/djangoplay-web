@@ -76,7 +76,7 @@ It is a good practice to **centralize common models and utilities** like `TimeSt
 
 You can create a **shared app** or module dedicated to common models, mixins, and utilities. This can be an app that holds the **base models** and any shared functionality, for example, an app called `core` or `common`.
 
-Here’s how you could do it:
+Here's how you could do it:
 
 ### **1. Create a `core` App for Shared Models**
 
@@ -177,7 +177,7 @@ class Invoice(TimeStampedModel):
 
 ### **4. Benefits of This Approach**
 
-1. **Single Source of Truth**: Both `TimeStampedModel` and `ActiveManager` are defined in one place (in `core`), so you don’t have to worry about redundancy and inconsistencies when using them across apps.
+1. **Single Source of Truth**: Both `TimeStampedModel` and `ActiveManager` are defined in one place (in `core`), so you don't have to worry about redundancy and inconsistencies when using them across apps.
 2. **Cleaner App Structure**: The logic for base models and managers is decoupled from business-specific logic in apps like `clients` or `finance`.
 3. **Easy Maintenance**: When you need to update the base models or managers, you only need to update them in the `core` app, which ensures consistency across the entire project.
 4. **Modular Architecture**: It follows a modular approach to organizing your project, making it easier to scale or add more shared functionality in the future (like shared signals, utilities, etc.).
