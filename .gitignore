@@ -210,3 +210,7 @@ djpenv
 .env
 .env.env.bak
 .env.bak
+dev.pem
+dev-key.pem
+celerybeat-schedule.db
+
