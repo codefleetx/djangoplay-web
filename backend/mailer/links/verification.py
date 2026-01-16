@@ -1,4 +1,3 @@
-# utilities/services/links/verification.py
 from users.services.signup_token_manager import SignupTokenManagerService
 from urllib.parse import urlencode
 from utilities.admin.url_utils import get_site_base_url

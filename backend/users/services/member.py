@@ -285,7 +285,7 @@ class MemberService:
             )
             signup_request.save(user=created_by)
 
-            from utilities.services.email.member_notifications import send_manual_verification_email_task        
+            from mailer.flows.member_notifications import send_manual_verification_email_task        
             # Async verification email via Celery
             send_manual_verification_email_task.delay(
                 member.id,

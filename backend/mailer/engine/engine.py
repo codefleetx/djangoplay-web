@@ -5,9 +5,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMultiAlternatives
 
-from users.adapters.email.templates import TemplateResolver
-from users.adapters.email.inline_images import InlineImageService
-from users.adapters.email.unsubscribe import UnsubscribeService
+from mailer.engine.user_adapter import adapt_to_email_user
+from mailer.engine.templates import TemplateResolver
+from mailer.engine.inline_images import InlineImageService
+from mailer.engine.unsubscribe_adapter import UnsubscribeService
 from users.adapters.context.support import SupportContextProvider
 from users.adapters.context.email import EmailContextProvider
 from users.adapters.context.password_reset import PasswordResetContextProvider
@@ -153,8 +154,6 @@ class EmailEngine:
         """
         email = email.lower().strip()
         # Normalize prefix once for engine logic
-        from users.adapters.email.templates import TemplateResolver
-
         normalized_prefix = TemplateResolver(prefix).prefix
 
 

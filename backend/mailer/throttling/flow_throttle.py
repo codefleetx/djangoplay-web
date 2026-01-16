@@ -1,9 +1,8 @@
-# utilities/services/email/flow_throttle.py
 import logging
 from typing import Optional, Tuple, Dict, Any
 from django.conf import settings
 
-from utilities.services.email.throttle import check_and_increment_email_limit
+from .throttle import check_and_increment_email_limit
 
 logger = logging.getLogger(__name__)
 

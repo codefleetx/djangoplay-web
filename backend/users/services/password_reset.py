@@ -134,7 +134,7 @@ class PasswordResetService:
                 user=user,
             )
 
-        from utilities.services.email.password_reset import (
+        from mailer.flows.password_reset import (
             send_password_reset_email_task,
         )
 

@@ -2,8 +2,6 @@ import logging
 from dataclasses import dataclass
 from typing import Optional, Any, Iterable
 
-from django.conf import settings
-
 from users.models import (
     SupportTicket,
     SupportStatus,
@@ -12,8 +10,8 @@ from users.models import (
     Member,
 )
 from core.middleware import thread_local
-from utilities.services.email.flow_throttle import allow_flow
-from utilities.services.email.member_notifications import (
+from mailer.throttling.flow_throttle import allow_flow
+from mailer.flows.member_notifications import (
     send_support_or_bug_email_task,
 )
 
