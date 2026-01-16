@@ -8,9 +8,9 @@ from utilities.commons import helpers
 
 from users.models import Member, SupportTicket
 from utilities.admin.url_utils import get_site_base_url, get_admin_url
-from utilities.services.email.base import send_email_via_adapter
+from mailer.engine.base import send_email_via_adapter
 from utilities.constants.template_registry import TemplateRegistry as T
-from utilities.services.links.verification import build_verification_url
+from mailer.links.verification import build_verification_url
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ from django.views import View
 from users.exceptions import EmployeeValidationError, MemberValidationError
 from users.services.signup_flow import SignupFlowService
 from utilities.commons.helpers import employee_state_by_email
-from utilities.services.links.resend import build_resend_verification_url
+from mailer.links.resend import build_resend_verification_url
 
 logger = logging.getLogger(__name__)
 

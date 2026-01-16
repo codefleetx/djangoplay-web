@@ -5,7 +5,7 @@ from users.models import Member
 from users.services.member import MemberService
 from users.services.signup_token_manager import SignupTokenManagerService
 from mailer.flows.member_notifications import send_verification_email_task
-from utilities.services.email.flow_throttle import allow_flow
+from mailer.throttling.flow_throttle import allow_flow
 from core.middleware import thread_local
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class ResendVerificationResult:
         self.message = message
 
 
-def resend_verification_for_email(
+def resend_verification_for_email_task(
     email: str,
     created_by=None,
     client_ip: str | None = None,

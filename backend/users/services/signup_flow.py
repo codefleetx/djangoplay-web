@@ -9,8 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 from policyengine.components.ssopolicies import setup_role_based_group
-from utilities.services.email.resend_verification import *
-from utilities.services.email.unverified_guard import enforce_email_signup_rules
+from mailer.engine.unverified_guard import enforce_email_signup_rules
 
 from users.models import *
 from users.services import EmployeeService, MemberService
@@ -115,7 +114,7 @@ class SignupFlowService:
         # -----------------------
         # Welcome email
         # -----------------------
-        from utilities.services.email.member_notifications import send_successful_signup_email_task, send_verification_email_task
+        from mailer.flows.member_notifications import send_successful_signup_email_task, send_verification_email_task
         try:
             send_successful_signup_email_task.delay(member.id)
         except Exception:
@@ -187,7 +186,7 @@ class SignupFlowService:
                 },
                 created_by=user,
             )
-            from utilities.services.email.member_notifications import send_successful_signup_email_task, send_verification_email_task
+            from mailer.flows.member_notifications import send_successful_signup_email_task, send_verification_email_task
             send_successful_signup_email_task.delay(member.id)
 
         # For email signups (non-redstar): create token

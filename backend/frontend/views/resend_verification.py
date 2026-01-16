@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from mailer.flows.resend_verification import (
-    resend_verification_for_email,
+    resend_verification_for_email_task,
 )
 
 
@@ -13,7 +13,7 @@ def ResendVerificationView(request):
         messages.error(request, _("Email address missing."))
         return redirect(reverse("account_login"))
 
-    result = resend_verification_for_email(
+    result = resend_verification_for_email_task(
         email=email,
         created_by=request.user if request.user.is_authenticated else None,
         client_ip=request.META.get("REMOTE_ADDR"),

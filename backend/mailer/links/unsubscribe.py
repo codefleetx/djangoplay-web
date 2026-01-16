@@ -1,5 +1,3 @@
-# utilities/services/links/unsubscribe.py
-
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode

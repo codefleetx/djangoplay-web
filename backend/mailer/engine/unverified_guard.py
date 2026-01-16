@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 
 from utilities.commons.helpers import employee_state_by_email
-from utilities.services.links.resend import build_resend_verification_url
+from mailer.links.resend import build_resend_verification_url
 from users.exceptions import MemberValidationError
 
 

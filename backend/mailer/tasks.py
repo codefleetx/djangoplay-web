@@ -1,0 +1,13 @@
+"""
+Celery task registry for the mailer app.
+
+This module exists ONLY to expose mailer-owned tasks
+to Celery autodiscovery.
+
+No logic should live here.
+"""
+
+# Email flows
+from mailer.flows.password_reset import send_password_reset_email_task  # noqa
+from mailer.flows.resend_verification import resend_verification_for_email_task  # noqa
+from mailer.flows.member_notifications import send_support_or_bug_email_task  # noqa

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import View
 from utilities.constants.template_registry import TemplateRegistry
-from utilities.services.email.unsubscribe_validation import validate_unsubscribe_token
+from mailer.engine.unsubscribe_validation import validate_unsubscribe_token
 
 logger = logging.getLogger(__name__)
 
