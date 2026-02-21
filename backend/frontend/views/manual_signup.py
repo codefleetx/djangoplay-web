@@ -82,7 +82,7 @@ class ManualSignupView(View):
         # Business rule violations
         # -------------------------------------------------
         except MemberValidationError as exc:
-            for _, msg in exc.message_dict.items():
+            for msg in exc.messages:
                 messages.error(request, mark_safe(msg))
             return redirect(reverse("account_login"))
 

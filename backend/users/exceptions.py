@@ -64,9 +64,52 @@ class EmployeeValidationError(UserBaseException, ValidationError):
             return f"Employee validation error: {', '.join(str(m) for m in self.message)}"
         return super().__str__()
 
-class MemberValidationError(UserBaseException, ValidationError):
+# class MemberValidationError(UserBaseException, ValidationError):
 
-    """Exception for member validation errors."""
+#     """Exception for member validation errors."""
+
+#     valid_codes = [
+#         'user_error', 'invalid_fields', 'multiple_errors',
+#         'invalid_member_code', 'duplicate_member_code', 'duplicate_email',
+#         'duplicate_sso_id', 'invalid_sso_provider', 'invalid_phone_number',
+#         'account_deleted', 'invalid_status', 'unverified_member',
+#         'invalid_permissions', 'invalid_signup_request', 'invalid_password_reset',
+#         'member_creation_failed','member_update_failed', 'missing_master_data',
+#         'signup_request_failed', 'member_activation_failed', 'email_error',
+#         'member_soft_delete_error', 'member_restore_error', 'email_unverified',
+#     ]
+
+#     def __init__(self, message, code=None, details=None):
+#         if code and code not in self.valid_codes:
+#             logger.error(f"Invalid error code: {code}. Must be one of {self.valid_codes}")
+#             raise ValueError(f"Invalid error code: {code}")
+#         super().__init__(message, code or "member_validation_error", details)
+
+#     def to_dict(self):
+#         """Convert exception to dictionary for API responses."""
+#         if isinstance(self.message, dict):
+#             error_message = "Multiple field errors"
+#             details = {"errors": self.message, **self.details}
+#         elif isinstance(self.message, list):
+#             error_message = "Multiple validation errors"
+#             details = {"errors": self.message, **self.details}
+#         else:
+#             error_message = str(self.message)
+#             details = self.details
+#         return {
+#             "error": error_message,
+#             "code": self.code,
+#             "details": details,
+#         }
+
+#     def __str__(self):
+#         if isinstance(self.message, dict):
+#             return f"Member validation error: {', '.join(f'{k}: {v}' for k, v in self.message.items())}"
+#         elif isinstance(self.message, list):
+#             return f"Member validation error: {', '.join(str(m) for m in self.message)}"
+#         return super().__str__()
+
+class MemberValidationError(ValidationError):
 
     valid_codes = [
         'user_error', 'invalid_fields', 'multiple_errors',
@@ -83,31 +126,11 @@ class MemberValidationError(UserBaseException, ValidationError):
         if code and code not in self.valid_codes:
             logger.error(f"Invalid error code: {code}. Must be one of {self.valid_codes}")
             raise ValueError(f"Invalid error code: {code}")
-        super().__init__(message, code or "member_validation_error", details)
 
-    def to_dict(self):
-        """Convert exception to dictionary for API responses."""
-        if isinstance(self.message, dict):
-            error_message = "Multiple field errors"
-            details = {"errors": self.message, **self.details}
-        elif isinstance(self.message, list):
-            error_message = "Multiple validation errors"
-            details = {"errors": self.message, **self.details}
-        else:
-            error_message = str(self.message)
-            details = self.details
-        return {
-            "error": error_message,
-            "code": self.code,
-            "details": details,
-        }
+        self.details = details or {}
 
-    def __str__(self):
-        if isinstance(self.message, dict):
-            return f"Member validation error: {', '.join(f'{k}: {v}' for k, v in self.message.items())}"
-        elif isinstance(self.message, list):
-            return f"Member validation error: {', '.join(str(m) for m in self.message)}"
-        return super().__str__()
+        # 🔥 CRITICAL: initialize Django ValidationError properly
+        super().__init__(message, code=code or "member_validation_error")
 
 class LeaveValidationError(UserBaseException, ValidationError):
 
