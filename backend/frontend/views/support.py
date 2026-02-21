@@ -5,7 +5,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from helpdesk.services.support_ticket_service import SupportService
-from users.contracts.identity import get_identity_snapshot
 from users.services.identity_query_service import IdentityQueryService
 from utilities.commons.helpers import employee_state_by_email
 from utilities.constants.template_registry import TemplateRegistry
@@ -123,7 +122,7 @@ def support_view(request):
                 else:
                     identity = IdentityQueryService.get_by_email(email)
                     if identity:
-                        snapshot = get_identity_snapshot(identity.id)
+                        snapshot = IdentityQueryService.get_identity_snapshot(identity.id)
                         is_unsubscribed = snapshot.get("is_unsubscribed", False)
 
                 if is_unsubscribed:

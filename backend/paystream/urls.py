@@ -100,6 +100,11 @@ urlpatterns = [
     # ------------------------------------------------------------------
     path("console/dashboard/", dashboard_view, name="console_dashboard"),
     path("support/", support_view, name="support"),
+    
+    # ------------------------------------------------------------------
+    # Generic Issue Tracker Routes
+    # ------------------------------------------------------------------
+    path("api/v1/issuetracker/", include("paystream.integrations.issuetracker.urls")),
 
     # ------------------------------------------------------------------
     # Custom Admin Console Routes

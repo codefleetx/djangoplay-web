@@ -21,7 +21,7 @@ def assign_member_viewer_group(sender, instance, created, **kwargs):
     """Assign Viewer group to SSO members after Member creation or update."""
     from policyengine.components.ssopolicies import setup_role_based_group  # ← lazy import
 
-    employee = instance.employee
+    employee = instance
     is_sso_user = (
         employee.is_verified
         and (employee.role.code == 'SSO' or employee.employee_type.code == 'SSO')
@@ -69,7 +69,7 @@ def assign_employee_viewer_group(sender, instance, created, **kwargs):
 @receiver(post_save, sender='users.SignUpRequest')
 def handle_sso_signup(sender, instance, created, **kwargs):
     """Handle signup request, restore deleted Member account if exists or create new."""
-    Member = apps.get_model('users', 'Member')
+    MemberProfile = apps.get_model('teamcentral', 'MemberProfile')
     apps.get_model('users', 'Employee')
     if created:
         try:
@@ -77,14 +77,14 @@ def handle_sso_signup(sender, instance, created, **kwargs):
             if instance.sso_provider != 'EMAIL' and instance.sso_id:
                 query |= Q(employee__sso_id=instance.sso_id, deleted_at__isnull=False)
 
-            deleted_member = Member.objects.filter(query).first()
+            deleted_member = MemberProfile.objects.filter(query).first()
             if deleted_member:
                 deleted_member.deleted_at = None
                 deleted_member.deleted_by = None
                 deleted_member.email = instance.user.email
 
                 if instance.user.is_verified:
-                    active_status = apps.get_model('users', 'MemberStatus').objects.get(
+                    active_status = apps.get_model('teamcentral', 'MemberStatus').objects.get(
                         code='ACTV'
                     )
                     deleted_member.status = active_status
@@ -95,7 +95,7 @@ def handle_sso_signup(sender, instance, created, **kwargs):
                 from teamcentral.services import MemberLifecycleService
                 MemberLifecycleService.send_welcome_back_email(deleted_member)
             else:
-                if not Member.objects.filter(
+                if not MemberProfile.objects.filter(
                     employee=instance.user, deleted_at__isnull=True
                 ).exists():
                     from teamcentral.services import MemberLifecycleService
@@ -104,11 +104,16 @@ def handle_sso_signup(sender, instance, created, **kwargs):
                         'first_name': instance.user.first_name,
                         'last_name': instance.user.last_name,
                         'employee': instance.user,
-                        'status': apps.get_model('users', 'MemberStatus').objects.get(
+                        'status': apps.get_model('teamcentral', 'MemberStatus').objects.get(
                             code='ACTV' if instance.user.is_verified else 'PEND'
                         ),
                     }
-                    MemberLifecycleService.create_member(member_data, created_by=instance.user)
+                    # MemberLifecycleService.create_member(member_data, created_by=instance.user)
+                    MemberLifecycleService.create_member(
+                        data=member_data,
+                        created_by=instance.user
+                    )
+
                     logger.info(
                         f"Created new member for SignUpRequest: {instance.user.email}"
                     )

@@ -27,6 +27,7 @@ from paystream.app_settings.static_media import *
 from paystream.app_settings.templates import *
 from paystream.app_settings.werkzeug import *
 from paystream.settings.validation import *
+from paystream.app_settings.genericissuetracker import *
 
 # Default; overridden by dev/staging/prod
 DEBUG = False

@@ -65,6 +65,10 @@ INSTALLED_APPS = [
     # Styling / inline CSS / compressor
     "django_inlinecss",
     "compressor",
+    
+    # Issue Tracker Integration
+    "genericissuetracker",
+    "paystream.integrations.issuetracker.apps.IssueTrackerIntegrationConfig",
 ]
 
 # Custom User Model
