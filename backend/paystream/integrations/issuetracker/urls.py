@@ -9,6 +9,7 @@ Mount Path:
     /api/v1/issuetracker/
 """
 
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
@@ -16,8 +17,11 @@ from .views import (
     IntegratedCommentCRUDViewSet,
     IntegratedAttachmentCRUDViewSet,
 )
+from .views.attachment_download import protected_attachment_download
 
-from genericissuetracker.views.v1.read.issue import IssueReadViewSet
+from paystream.integrations.issuetracker.views.v1.read.issue import (
+    IntegratedIssueReadViewSet,
+)
 from genericissuetracker.views.v1.read.comment import CommentReadViewSet
 from genericissuetracker.views.v1.read.attachment import AttachmentReadViewSet
 from genericissuetracker.views.v1.read.label import LabelReadViewSet
@@ -29,7 +33,7 @@ router = DefaultRouter()
 # ISSUE ENDPOINTS
 # ----------------------------------------------------------------------
 router.register(r"issues", IntegratedIssueCRUDViewSet, basename="issue")
-router.register(r"issues-read", IssueReadViewSet, basename="issue-read")
+router.register(r"issues-read", IntegratedIssueReadViewSet, basename="issue-read")
 
 # ----------------------------------------------------------------------
 # COMMENT ENDPOINTS
@@ -49,4 +53,10 @@ router.register(r"attachments-read", AttachmentReadViewSet, basename="attachment
 router.register(r"labels", LabelCRUDViewSet, basename="label")
 router.register(r"labels-read", LabelReadViewSet, basename="label-read")
 
-urlpatterns = router.urls
+urlpatterns = router.urls + [
+    path(
+        "attachments/<uuid:pk>/download/",
+        protected_attachment_download,
+        name="issuetracker-attachment-download",
+    ),
+]

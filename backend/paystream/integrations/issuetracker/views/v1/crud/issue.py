@@ -15,12 +15,16 @@ from genericissuetracker.services.identity import get_identity_resolver
 from paystream.integrations.issuetracker.services.visibility import (
     IssueVisibilityService,
 )
+from paystream.integrations.issuetracker.serializers.v1.read.issue import (
+    IntegratedIssueReadSerializer,
+)
 
 
 class IntegratedIssueCRUDViewSet(IssueCRUDViewSet):
     """
     DjangoPlay-integrated Issue ViewSet.
     """
+    read_serializer_class = IntegratedIssueReadSerializer
 
     # ----------------------------------------------------------
     # Visibility Governance
@@ -53,3 +57,9 @@ class IntegratedIssueCRUDViewSet(IssueCRUDViewSet):
                 issue=issue,
                 identity=identity,
             )
+    
+    # ------------------------------------------------------------------
+    # Soft Delete Handling
+    # ------------------------------------------------------------------
+    def perform_destroy(self, instance):
+        instance.soft_delete()

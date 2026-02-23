@@ -117,4 +117,9 @@ urlpatterns = [
     path("admin/<str:app_label>/", single_app_view, name="admin_single_app"),
     path("console/", admin_site.urls),
     path("admin/", app_index_view, name="admin_app_index"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Serve MEDIA only in DEBUG
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
