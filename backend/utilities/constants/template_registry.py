@@ -138,3 +138,4 @@ class TemplateRegistry:
     # -------------------------------------------------------------------------
 
     ISSUES_LIST = "issues/list.html"
+    ISSUES_DETAIL = "issues/detail.html"

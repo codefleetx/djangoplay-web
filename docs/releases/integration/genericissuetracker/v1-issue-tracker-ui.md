@@ -481,3 +481,371 @@ Result:
 * No architectural leakage
 
 ---
+
+# 📘 Phase UI-2 — Requirement Scope (Detail View + Read-Only Discussion)
+
+## 🎯 Objective
+
+Extend the Issue Tracker UI with a **server-rendered Issue Detail Page** that:
+
+* Displays full issue information
+* Displays comment thread
+* Shows secure attachment links
+* Strictly reuses existing domain services
+* Introduces zero business-logic duplication
+
+UI-2 remains **read-only** (no create/update yet).
+
+---
+
+# 🧱 What UI-2 Will Deliver
+
+## 1️⃣ Issue Detail View
+
+### 📍 Route
+
+On subdomain:
+
+```
+https://issues.<domain>/issues/<uuid>/
+```
+
+Namespace:
+
+```python
+reverse("issues:detail", kwargs={"pk": issue.pk})
+```
+
+---
+
+### 📄 Page Layout
+
+The page will display:
+
+| Section     | Content                                     |
+| ----------- | ------------------------------------------- |
+| Header      | Issue title + status badge + priority badge |
+| Meta Block  | Reporter, created date, last updated        |
+| Description | Full issue description                      |
+| Attachments | Secure links (if present)                   |
+| Comments    | Threaded list (flat rendering for now)      |
+
+---
+
+## 2️⃣ Comment Thread (Read-Only)
+
+* Render all related comments
+* Order by created_at ascending
+* Display:
+
+  * Author
+  * Created time (humanized)
+  * Comment content
+* No reply form yet (UI-3)
+
+Must reuse existing comment model from `genericissuetracker`.
+
+No filtering logic in template.
+
+---
+
+## 3️⃣ Secure Attachment Handling
+
+Attachments must:
+
+* Use protected download endpoint (already implemented in integration)
+* Never expose `.file.url`
+* Use:
+
+```python
+reverse("issues:attachment_download", kwargs={...})
+```
+
+We will verify correct namespacing during implementation.
+
+---
+
+## 4️⃣ Visibility & Permission Enforcement
+
+UI-2 must:
+
+* Use the same `IssueVisibilityService`
+* Ensure unauthorized access returns 404 (not 403)
+* Never manually check roles
+
+Access pattern:
+
+```python
+issue = IssueQueryService.get_single_issue_for_user(user, pk)
+```
+
+If not visible → raise `Http404`.
+
+---
+
+## 5️⃣ Template Structure
+
+Inside:
+
+```
+ui/templates/issues/detail.html
+ui/templates/issues/partials/comment_row.html
+ui/templates/issues/partials/attachment_list.html
+```
+
+Extends:
+
+```
+admin/base.html
+```
+
+Styling:
+
+* Bootstrap cards
+* Badge styling for status/priority
+* GitHub-style issue header layout
+* Reuse your theme system
+
+---
+
+## 6️⃣ URL Additions
+
+Inside:
+
+```
+ui/urls.py
+```
+
+Add:
+
+```python
+path("<int:issue_number>/", IssueDetailView.as_view(), name="detail")
+```
+
+---
+
+# 🔐 Architectural Rules (Strict)
+
+UI-2 will:
+
+* Import only from:
+
+  * `genericissuetracker.models`
+  * `IssueVisibilityService`
+* Not duplicate permission classes
+* Not modify lifecycle state
+* Not perform status transitions
+* Not allow comment creation
+* Not allow issue edits
+
+Pure presentation layer.
+
+---
+
+# 🧠 Service Layer Extension
+
+We will extend:
+
+```
+IssueQueryService
+```
+
+Add:
+
+```python
+get_issue_for_detail(user, pk)
+```
+
+Responsibilities:
+
+* Base queryset
+* Visibility filter
+* Prefetch comments + attachments
+* Deterministic ordering
+* Return single object or raise 404
+
+No logic beyond query construction.
+
+---
+
+# 📦 Deliverables After UI-2
+
+After this phase:
+
+* Clicking an issue in list view opens detail page.
+* Full discussion visible.
+* Attachments downloadable securely.
+* Visibility rules respected.
+* No write operations exposed.
+
+---
+
+# ✅ UI-2 Validation Checklist
+
+**Feature:** Issue Detail View (Read-Only)
+**Branch:** `feature/issue-tracker-integration-ui-2`
+
+---
+
+## 1️⃣ Routing & Navigation
+
+### ✔ Issue list → detail navigation
+
+* Go to:
+
+  ```
+  https://issues.localhost:9999/issues/
+  ```
+* Click any issue title.
+* Confirm redirect to:
+
+  ```
+  /issues/<issue_number>/
+  ```
+* Confirm URL uses **issue_number** (not UUID).
+
+### ✔ Back navigation
+
+* Click “← Back to Issues”.
+* Confirm:
+
+  * Redirects to `/issues/`
+  * Status filter preserved (if applied)
+
+---
+
+## 2️⃣ Visibility Governance (RBAC)
+
+### ✔ Anonymous user
+
+* Log out.
+* Visit public issue detail page.
+* Confirm:
+
+  * Public issue visible.
+  * Internal (is_public=False) issue returns **404**.
+  * No 403 should appear.
+
+### ✔ Authenticated non-privileged user
+
+* Login as standard employee (non-internal role).
+* Confirm:
+
+  * Public issues visible.
+  * Internal issues return **404**.
+
+### ✔ Privileged role (CEO / DJGO / allowed roles)
+
+* Login as privileged user.
+* Confirm:
+
+  * Both public and internal issues visible.
+  * Comments visible.
+  * Attachments downloadable.
+
+---
+
+## 3️⃣ Comment Rendering
+
+For an issue with comments:
+
+* Confirm:
+
+  * Comment count in header matches DB.
+  * `commenter_email` is displayed.
+  * `comment.body` is visible.
+  * Timestamp uses `naturaltime`.
+  * Comments ordered ascending (oldest first).
+
+For issue without comments:
+
+* Confirm:
+
+  * “No comments yet.” message appears.
+
+---
+
+## 4️⃣ Attachment Handling
+
+For issue with attachments:
+
+* Confirm:
+
+  * Attachment list appears.
+  * File name shown correctly.
+  * Download link points to:
+
+    ```
+    /api/v1/issuetracker/attachments/<uuid>/download/
+    ```
+  * Clicking download works.
+  * Unauthorized access returns 404.
+
+Confirm:
+
+* No direct MEDIA URL exposed.
+* No `.file.url` used in templates.
+
+---
+
+## 5️⃣ Soft Delete Safety
+
+* Soft delete an issue.
+* Attempt to access detail page.
+* Confirm:
+
+  * Returns 404.
+  * No data leakage.
+
+---
+
+## 6️⃣ Data Integrity
+
+Inspect rendered page and confirm:
+
+* Reporter uses `reporter_email`
+* Comment uses `body`
+* Status badge displays correct value
+* Priority badge displays correct value
+* Issue number displayed in header
+
+---
+
+## 7️⃣ No Regression in UI-1
+
+Re-test:
+
+* Issue list page loads.
+* Pagination works.
+* Status filtering works.
+* Comment count still visible.
+* Lock icon shows for internal issues.
+
+---
+
+## 8️⃣ No Business Logic Duplication
+
+Manual code review confirmation:
+
+* No permission logic in templates.
+* No manual role checks in views.
+* Only `IssueVisibilityService` used.
+* No direct access to raw MEDIA.
+* No schema mutation.
+
+---
+
+# 📦 Expected State After UI-2
+
+System now supports:
+
+* GitHub-style issue list
+* GitHub-style issue detail
+* Read-only comments
+* Secure attachment downloads
+* Full RBAC visibility governance
+* 404 masking for unauthorized access
+
+No write operations exposed in UI yet.
+
+---

@@ -1,0 +1,13 @@
+{% if issue.attachments.all %}
+<hr>
+<h6>Attachments</h6>
+<ul>
+    {% for attachment in issue.attachments.all %}
+        <li>
+            <a href="{% url 'issuetracker-attachment-download' attachment.pk %}">
+                {{ attachment.original_name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}

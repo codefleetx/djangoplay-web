@@ -58,3 +58,26 @@ class IssueQueryService:
         Resolve page size from genericissuetracker settings.
         """
         return resolve_page_size()
+
+    @staticmethod
+    def get_issue_for_detail(user, issue_number: int):
+        from django.http import Http404
+
+        queryset = (
+            Issue.objects.all()
+            .prefetch_related("comments", "attachments")
+        )
+
+        identity = {
+            "is_authenticated": user.is_authenticated,
+            "is_superuser": getattr(user, "is_superuser", False),
+            "role_code": getattr(user, "role_code", None),
+        }
+
+        visibility_service = IssueVisibilityService(identity=identity)
+        queryset = visibility_service.filter_issue_queryset(queryset)
+
+        try:
+            return queryset.get(issue_number=issue_number)
+        except Issue.DoesNotExist:
+            raise Http404("Issue not found")

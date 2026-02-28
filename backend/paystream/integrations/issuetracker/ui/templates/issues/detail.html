@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="mt-4 text-start">
+    <div class="mb-3">
+        <a href="{% url 'issues:list' %}?status={{ request.GET.status|default:'ALL' }}"
+        class="text-decoration-none">
+            ← Back to Issues
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>
+                #{{ issue.issue_number }} {{ issue.title }}
+                <span class="badge bg-secondary">{{ issue.status }}</span>
+                <span class="badge bg-info text-dark">{{ issue.priority }}</span>
+            </h4>
+
+            <p class="text-muted mb-2">
+                Opened by {{ issue.reporter_email }} • 
+                {{ issue.created_at|naturaltime }}
+            </p>
+
+            <hr>
+
+            <div class="mb-4">
+                {{ issue.description|linebreaks }}
+            </div>
+
+            {% include "issues/partials/attachment_list.html" %}
+
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Comments ({{ issue.comments.count }})
+        </div>
+        <div class="card-body">
+            {% for comment in issue.comments.all %}
+                {% include "issues/partials/comment_row.html" %}
+            {% empty %}
+                <div class="text-muted">No comments yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
