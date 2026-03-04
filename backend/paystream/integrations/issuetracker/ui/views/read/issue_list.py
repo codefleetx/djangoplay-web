@@ -25,18 +25,53 @@ class IssueListView(View):
 
     template_name = T.ISSUES_LIST
 
+    # def get(self, request):
+    #     status = request.GET.get("status", "ALL")
+
+    #     queryset = IssueQueryService.get_issues_for_list(
+    #         user=request.user,
+    #         status=status,
+    #     )
+
+    #     page_size = IssueQueryService.get_page_size()
+
+    #     paginator = Paginator(queryset, page_size)
+    #     page_number = request.GET.get("page")
+    #     page_obj = paginator.get_page(page_number)
+
+    #     allow_anonymous = get_setting("ALLOW_ANONYMOUS_REPORTING")
+
+    #     can_create_issue = (
+    #         request.user.is_authenticated
+    #         or allow_anonymous
+    #     )
+
+    #     context = {
+    #         "page_obj": page_obj,
+    #         "status_filter": status,
+    #         "status_choices": IssueStatus.choices,
+    #         "site_name": settings.SITE_NAME,
+    #         "site_url": settings.SITE_URL,
+    #         "can_create_issue": can_create_issue,
+    #     }
+
+    #     return render(request, self.template_name, context)
+    
     def get(self, request):
+
         status = request.GET.get("status", "ALL")
 
-        queryset = IssueQueryService.get_issues_for_list(
+        issues = IssueQueryService.get_issues_for_list(
             user=request.user,
             status=status,
         )
 
         page_size = IssueQueryService.get_page_size()
 
-        paginator = Paginator(queryset, page_size)
+        paginator = Paginator(issues, page_size)
+
         page_number = request.GET.get("page")
+
         page_obj = paginator.get_page(page_number)
 
         allow_anonymous = get_setting("ALLOW_ANONYMOUS_REPORTING")

@@ -5,6 +5,10 @@
 
     <div class="ms-2 me-auto">        
         <div class="fw-bold">
+            {% if issue.source == "bug" %}
+                <span class="badge bg-warning text-dark me-1">BUG</span>
+            {% endif %}
+
             <a href="{% url 'issues:detail' issue.issue_number %}">
                 #{{ issue.issue_number }} {{ issue.title }}
             </a>

@@ -1,5 +1,14 @@
 {% extends "admin/base.html" %}
 {% load humanize %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ SITE_NAME }} | Issues{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="icon" type="image/png" href="{% static 'elements/images/logo/logo_icon.png' %}">    
+{% endblock %}
 
 {% block content %}
 <div class="mt-4 text-start">

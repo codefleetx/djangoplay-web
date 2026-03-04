@@ -94,20 +94,42 @@ class IssueDetailView(View):
     # ---------------------------------------------------------
     # Visibility-safe fetch
     # ---------------------------------------------------------
+    # def _get_visible_issue(self, request, issue_number):
+
+    #     resolver = get_identity_resolver()
+    #     identity = resolver.resolve(request) or {}
+    #     visibility = IssueVisibilityService(identity=identity)
+
+    #     queryset = visibility.filter_issue_queryset(
+    #         Issue.objects.all()
+    #     )
+
+    #     try:
+    #         return queryset.get(issue_number=issue_number)
+    #     except Issue.DoesNotExist:
+    #         raise Http404
+    
     def _get_visible_issue(self, request, issue_number):
+        from helpdesk.models import BugReport
+        from helpdesk.adapters.bug_issue_projection import project_bug_to_issue
 
         resolver = get_identity_resolver()
         identity = resolver.resolve(request) or {}
         visibility = IssueVisibilityService(identity=identity)
 
-        queryset = visibility.filter_issue_queryset(
-            Issue.objects.all()
-        )
-
+        # Try numeric Generic Issue first
         try:
-            return queryset.get(issue_number=issue_number)
-        except Issue.DoesNotExist:
-            raise Http404
+            num = int(issue_number)
+            queryset = visibility.filter_issue_queryset(Issue.objects.all())
+            issue = queryset.get(issue_number=num)
+            return issue
+        except (ValueError, Issue.DoesNotExist):
+            # Fall back to BugReport projection
+            try:
+                bug = BugReport.objects.get(bug_number=issue_number)
+                return project_bug_to_issue(bug)
+            except BugReport.DoesNotExist:
+                raise Http404("Issue not found")
 
     # ---------------------------------------------------------
     # Context
