@@ -1,4 +1,4 @@
-from .common import get_decrypted_value, env
+from .common import env, get_decrypted_value
 
 REDIS_PORT = int(get_decrypted_value("REDIS_PORT", default="6379"))
 REDIS_DB   = int(get_decrypted_value("REDIS_DB", default="1"))

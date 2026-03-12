@@ -28,7 +28,7 @@ def decrypt_and_update_env():
 
     keys_to_decrypt = [
         'SITE_NAME','SITE_PROTOCOL', 'SITE_HOST', 'SITE_PORT', 'SITE_URL',
-        'REDIS_HOST', 'REDIS_PORT', 'REDIS_DB', 'REDIS_PASSWORD', 
+        'REDIS_HOST', 'REDIS_PORT', 'REDIS_DB', 'REDIS_PASSWORD',
         'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_PORT',
         'SUPERUSER_USERNAME', 'SUPERUSER_EMAIL', 'SUPERUSER_PASSWORD',
         'DJANGO_SECRET_KEY',
