@@ -354,6 +354,14 @@ class Migration(migrations.Migration):
             name='deleted_by',
             field=models.ForeignKey(blank=True, help_text='User who deleted this object.', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(app_label)s_%(class)s_deleted_by', to=settings.AUTH_USER_MODEL),
         ),
+        migrations.RunSQL(
+            sql="ALTER TABLE locations_timezone DROP CONSTRAINT IF EXISTS locations_timezone_pkey CASCADE;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
+        migrations.RunSQL(
+            sql="ALTER TABLE locations_timezone ALTER COLUMN timezone_id DROP DEFAULT;",
+            reverse_sql=migrations.RunSQL.noop,
+        ),
         migrations.AddField(
             model_name='timezone',
             name='id',
