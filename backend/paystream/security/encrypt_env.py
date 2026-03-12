@@ -36,7 +36,8 @@ def encrypt_and_update_env():
 
     # All keys you want encrypted (you intentionally keep all — respected)
     keys_to_encrypt = [
-        'SITE_NAME','SITE_PROTOCOL', 'SITE_HOST', 'SITE_PORT', 'SITE_URL', 'REDIS_HOST', 'REDIS_PORT', 'REDIS_DB',
+        'SITE_NAME','SITE_PROTOCOL', 'SITE_HOST', 'SITE_PORT', 'SITE_URL', 
+        'REDIS_HOST', 'REDIS_PORT', 'REDIS_DB', 'REDIS_PASSWORD', 
         'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_PORT',
         'SUPERUSER_USERNAME', 'SUPERUSER_EMAIL', 'SUPERUSER_PASSWORD',
         'DJANGO_SECRET_KEY',
@@ -47,10 +48,12 @@ def encrypt_and_update_env():
     ]
 
     # Check for missing keys
-    missing = [k for k in keys_to_encrypt if env.str(k, default=None) is None]
+    missing = [k for k in keys_to_encrypt 
+            if env.str(k, default=None) is None 
+            and k not in ('REDIS_PASSWORD',)]  # optional keys
     if missing:
         raise ValueError(f"Missing required keys in creds.txt: {', '.join(missing)}")
-
+    
     # Get encryption key
     encryption_key = env.str('ENCRYPTION_KEY')
     if not encryption_key:
