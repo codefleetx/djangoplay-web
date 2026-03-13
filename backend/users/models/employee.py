@@ -34,7 +34,7 @@ class EmployeeManager(BaseUserManager):
 
     def create_user(self, username, email, password=None, address=None, created_by=None, **extra_fields):
         """Create a regular employee."""
-        with transaction.atomic():            
+        with transaction.atomic():
             if not username:
                 raise ValueError("Username is required.")
             if not email:
@@ -58,7 +58,7 @@ class EmployeeManager(BaseUserManager):
             if password:
                 user.set_password(password)
             else:
-                user.set_unusable_password()    
+                user.set_unusable_password()
             user.save(using=self._db)
             return user
 
@@ -71,9 +71,9 @@ class EmployeeManager(BaseUserManager):
         extra_fields.setdefault('employment_status_id', EmploymentStatus.all_objects.get(code='ACTV').id)
         extra_fields.setdefault('employee_type_id', EmployeeType.all_objects.get(code='FT').id)
         extra_fields.setdefault('hire_date', timezone.now().date())
-        extra_fields.setdefault('department_id', __import__('teamcentral.models', fromlist=['Department']).Department.all_objects.get(code='FIN').id)        
+        extra_fields.setdefault('department_id', __import__('teamcentral.models', fromlist=['Department']).Department.all_objects.get(code='FIN').id)
         extra_fields.setdefault('department_id', Department.all_objects.get(code='FIN').id)
-        
+
         if extra_fields.get('is_staff') is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get('is_superuser') is not True:
