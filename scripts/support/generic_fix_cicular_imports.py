@@ -2,7 +2,6 @@ import argparse
 import logging
 import os
 import re
-from typing import List, Set, Tuple
 
 # Set up logging for better feedback
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
