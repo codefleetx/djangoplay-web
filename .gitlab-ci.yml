@@ -4,6 +4,8 @@ workflow:
 
 stages:
   - trigger
+  - deploy
 
 include:
   - local: '.gitlab/ci/github-mirror.yml'
+  - local: '.gitlab/ci/deploy.yml'
