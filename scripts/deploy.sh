@@ -18,6 +18,10 @@
 #   - NOPASSWD sudoers entry for 'systemctl restart {service_name}'.
 #   - SSH key for GitLab configured
 
+#!/usr/bin/env bash
+# deploy.sh — DjangoPlay Web App (Backend)
+# PEP 621 compliance - Using Editable Install to avoid socket/ctl build errors
+
 set -euo pipefail
 
 CONFIG_FILE="$HOME/.dplay/config.yaml"
@@ -52,8 +56,11 @@ git fetch origin
 git reset --hard origin/main
 
 # 4. Environment Sync (PEP 621 / pyproject.toml)
-echo "→ Syncing Python environment (pip install .)..."
-"$VENV_PATH/bin/pip" install .
+echo "→ Syncing Python environment..."
+# CRITICAL: We use '-e' (editable) to install dependencies 
+# without trying to bundle the current directory into a wheel.
+# This prevents OSError [Errno 6] with .ctl / .sock files.
+"$VENV_PATH/bin/pip" install -e .
 
 # 5. Database & Assets
 echo "→ Running migrations..."
