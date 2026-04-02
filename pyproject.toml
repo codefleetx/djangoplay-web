@@ -109,6 +109,23 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["backend"]
+exclude = [
+  "*.ctl",
+  "*.sock",
+  "*.log",
+  "**/__pycache__",
+  "*.pyc",
+  ".env",
+  "static_root/",
+  "media_root/",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "*.ctl",
+  "*.sock",
+  "*.log",
+]
 
 # ======================================================================
 # Build System
